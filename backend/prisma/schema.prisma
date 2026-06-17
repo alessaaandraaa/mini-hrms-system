@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EmploymentStatus {
+  Active
+  Resigned
+  On_Leave  
+}
+
+enum AttendanceStatus {
+  Present
+  Late
+  Absent
+  On_Leave
+}
+
+model Employee {
+  employeeId       String           @id @default(uuid()) @map("employee_id") @db.Uuid
+  employeeCode     String           @unique @map("employee_code")
+  fullName         String           @map("full_name")
+  email            String           @unique
+  contactNumber    String?          @map("contact_number")
+  position         String
+  department       String
+  dateHired        DateTime         @map("date_hired") @db.Date
+  employmentStatus EmploymentStatus @default(Active) @map("employment_status")
+
+  salary     Salary?
+  attendance Attendance[]
+  payroll    Payroll[]
+
+  @@map("employees")
+}
+
+model Salary {
+  salaryId    String   @id @default(uuid()) @map("salary_id") @db.Uuid
+  basicSalary Decimal  @default(0) @map("basic_salary") @db.Decimal(10, 2)
+  allowance   Decimal  @default(0) @db.Decimal(10, 2)
+  deductions  Decimal  @default(0) @db.Decimal(10, 2)
+  netSalary   Decimal? @map("net_salary") @db.Decimal(10, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  employeeId String   @unique @map("employee_id") @db.Uuid
+  employee   Employee @relation(fields: [employeeId], references: [employeeId])
+
+  @@map("salaries")
+}
+
+model Attendance {
+  attendanceId   String           @id @default(uuid()) @map("attendance_id") @db.Uuid
+  attendanceDate DateTime         @map("attendance_date") @db.Date
+  timeIn         DateTime?        @map("time_in") @db.Time
+  timeOut        DateTime?        @map("time_out") @db.Time
+  status         AttendanceStatus
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+
+  employeeId String   @map("employee_id") @db.Uuid
+  employee   Employee @relation(fields: [employeeId], references: [employeeId])
+
+  @@map("attendance")
+}
+
+model Payroll {
+  payrollId   String   @id @default(uuid()) @map("payroll_id") @db.Uuid
+  basicSalary Decimal  @map("basic_salary") @db.Decimal(10, 2)
+  allowance   Decimal  @default(0) @db.Decimal(10, 2)
+  deductions  Decimal  @default(0) @db.Decimal(10, 2)
+  netSalary   Decimal  @map("net_salary") @db.Decimal(10, 2)
+  payrollDate DateTime @default(now()) @map("payroll_date") @db.Date
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  employeeId String   @map("employee_id") @db.Uuid
+  employee   Employee @relation(fields: [employeeId], references: [employeeId])
+
+  @@map("payroll")
+}
