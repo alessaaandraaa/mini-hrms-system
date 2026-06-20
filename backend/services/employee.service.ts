@@ -14,6 +14,9 @@ export class EmployeeService {
         where: {
           ...(employmentStatus ? { employmentStatus } : {}),
         },
+        orderBy: {
+          fullName: "asc",
+        },
       });
 
       return employees;
@@ -26,11 +29,11 @@ export class EmployeeService {
   }
 
   // get employee
-  async getEmployee(employeeId: string) {
+  async getEmployee(id: string) {
     try {
       const employee = await prisma.employee.findUnique({
         where: {
-          employeeId,
+          employeeId: id,
         },
       });
 
@@ -43,6 +46,18 @@ export class EmployeeService {
     }
   }
 
+  async getEmployeeAttendanceList() {
+    return prisma.employee.findMany({
+      select: {
+        employeeId: true,
+        fullName: true,
+      },
+      orderBy: {
+        fullName: "asc",
+      },
+    });
+  }
+
   // add employee
   async addEmployee(
     employeeData: EmployeeCreateInput,
@@ -51,7 +66,10 @@ export class EmployeeService {
     try {
       const result = await prisma.$transaction(async (tx) => {
         const employee = await tx.employee.create({
-          data: employeeData,
+          data: {
+            ...employeeData,
+            dateHired: new Date(employeeData.dateHired),
+          },
         });
 
         await tx.salary.create({
@@ -74,11 +92,11 @@ export class EmployeeService {
   }
 
   // delete employee
-  async deleteEmployee(employeeId: string) {
+  async deleteEmployee(id: string) {
     try {
       const del = await prisma.employee.delete({
         where: {
-          employeeId,
+          employeeId: id,
         },
       });
 
@@ -92,10 +110,10 @@ export class EmployeeService {
   }
 
   // update employee
-  async updateEmployee(employeeId: string, employeeData: EmployeeUpdateInput) {
+  async updateEmployee(id: string, employeeData: EmployeeUpdateInput) {
     try {
       const updatedUser = await prisma.employee.update({
-        where: { employeeId },
+        where: { employeeId: id },
         data: employeeData,
       });
 

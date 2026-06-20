@@ -50,7 +50,7 @@ export class SalaryController {
   async editSalary(req: Request, res: Response) {
     try {
       const id = req.params.id as string;
-      const { salaryData } = req.body;
+      const salaryData = req.body;
 
       if (!id) {
         return res.status(400).json({

@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -16,8 +15,11 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
+import { useNavigate } from "react-router-dom";
+import { errorToast } from "@/lib/utils";
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -28,36 +30,34 @@ export default function LoginForm() {
 
   async function onSubmit(formData: z.infer<typeof formSchema>) {
     const { email, password } = formData;
-    const { data, error } = await authClient.signIn.email(
-      {
-        email,
-        password,
-      },
-      {
-        onSuccess() {
-          console.log("Successfully logged in. ", data);
-        },
-        onError() {
-          console.error("An error happened. ", error);
-        },
-      },
-    );
+    const { data, error } = await authClient.signIn.email({
+      email,
+      password,
+    });
+
+    if (error) {
+      errorToast();
+      return;
+    }
+
+    console.log("Successfully logged in. ", data);
+    navigate("/dashboard");
   }
 
   return (
     <Card className="w-sm sm:max-w-md ">
       <CardContent>
-        <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
+        <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
               name="email"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-demo-title">Email</FieldLabel>
+                  <FieldLabel htmlFor="login-form-email">Email</FieldLabel>
                   <Input
                     {...field}
-                    id="form-rhf-demo-title"
+                    id="login-form-email"
                     aria-invalid={fieldState.invalid}
                     placeholder="you@example.com"
                     autoComplete="off"
@@ -73,13 +73,13 @@ export default function LoginForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-demo-title">
+                  <FieldLabel htmlFor="login-form-password">
                     Password
                   </FieldLabel>
                   <Input
                     {...field}
                     type="password"
-                    id="form-rhf-demo-title"
+                    id="login-form-password"
                     aria-invalid={fieldState.invalid}
                     placeholder="Enter your password"
                     autoComplete="off"
@@ -95,7 +95,7 @@ export default function LoginForm() {
       </CardContent>
       <CardFooter>
         <Field orientation="horizontal">
-          <Button type="submit" form="form-rhf-demo">
+          <Button type="submit" form="login-form" className="bg-[#80645f]">
             LOG IN
           </Button>
         </Field>

@@ -11,6 +11,12 @@ router.get(
   employeeController.getEmployees.bind(employeeController),
 );
 router.get(
+  "/attendance",
+  authMiddleware,
+  employeeController.getEmployeeAttendanceList.bind(employeeController),
+);
+
+router.get(
   "/:id",
   authMiddleware,
   employeeController.getEmployee.bind(employeeController),

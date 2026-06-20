@@ -66,6 +66,23 @@ export class EmployeeController {
     }
   }
 
+  async getEmployeeAttendanceList(req: Request, res: Response) {
+    try {
+      const data = await employeeService.getEmployeeAttendanceList();
+
+      return res.status(200).json({ success: true, data });
+    } catch (error) {
+      console.error("[employee]: ", error);
+      return res.status(500).json({
+        success: false,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unexpected error happened while fetching employee.",
+        },
+      });
+    }
+  }
+
   async addEmployee(req: Request, res: Response) {
     try {
       const { employeeData, salaryData } = req.body;
@@ -115,7 +132,7 @@ export class EmployeeController {
 
   async updateEmployee(req: Request, res: Response) {
     try {
-      const { employeeData } = req.body;
+      const employeeData = req.body;
       const id = req.params.id as string;
 
       if (!id) {

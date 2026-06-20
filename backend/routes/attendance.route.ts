@@ -10,9 +10,14 @@ router.get(
   attendanceController.getAttendance.bind(attendanceController),
 );
 router.post(
-  "/:id",
+  "/",
   authMiddleware,
   attendanceController.addAttendance.bind(attendanceController),
+);
+router.put(
+  "/:id",
+  authMiddleware,
+  attendanceController.timeOutAttendance.bind(attendanceController),
 );
 
 export default router;
