@@ -175,7 +175,9 @@ h2 {
 p {
   margin: 0;
 }
-
+[data-slot="table-container"] {
+  overflow-x: visible;
+}
 .payroll-table [data-slot="table-container"] {
   overflow-x: visible !important;
 }

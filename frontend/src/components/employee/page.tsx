@@ -16,7 +16,7 @@ export default function EmployeesTable({
   const columns = getColumns(onDelete, onEdit);
 
   return (
-    <div className="w-full py-5">
+    <div className="w-full py-5 overflow-x-auto">
       <DataTable columns={columns} data={data} />
     </div>
   );
