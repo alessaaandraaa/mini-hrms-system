@@ -70,12 +70,6 @@ npx prisma migrate dev
 npx prisma generate
 ```
 
-Then run the BetterAuth migration — go to your PostgreSQL client and run the SQL file located at
-
-```
-backend/better-auth_migrations/
-```
-
 ### 5. Seed the admin user
 
 ```bash
