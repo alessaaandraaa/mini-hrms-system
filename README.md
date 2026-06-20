@@ -87,19 +87,7 @@ This creates the default admin account.
 
 ### 6. Run the application
 
-**Backend**
-
-```bash
-cd backend
-npm run dev
-```
-
-**Frontend**
-
-```bash
-cd frontend
-npm run dev
-```
+Return to the root folder and run `npm run dev`
 
 ### 7. Access the application
 
